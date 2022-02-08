@@ -774,6 +774,12 @@ func nodeIsOutdated(n *cke.Node, current *corev1.Node, taintCP bool) bool {
 		curTaints[taint.Key] = taint
 	}
 	for _, taint := range n.Taints {
+		if taint.Key == "node.cilium.io/agent-not-ready" {
+			_, ok := curTaints["node.kubernetes.io/not-ready"]
+			if !ok {
+				continue
+			}
+		}
 		cv, ok := curTaints[taint.Key]
 		if !ok {
 			return true
